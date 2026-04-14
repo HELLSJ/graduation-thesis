@@ -161,7 +161,7 @@ graduation thesis/
 |----------|-------|-------------|----------|
 | IMAGE_SIZE | 512 | Image size | src/config.py:4 |
 | BATCH_SIZE | 6 | Batch size | src/config.py:5 |
-| ROOT_DIR | 'd:\\graduation thesis\\data' | Data root directory | src/config.py:8 |
+| ROOT_DIR | 'data' | Data root directory | src/config.py:8 |
 | EPOCHS | 1001 | Training epochs | src/config.py:18 |
 | LEARNING_RATE | 0.0001 | Learning rate | src/config.py:19 |
 | ENCODER_NAME | 'efficientnet_v2_b2' | EfficientNet encoder name | src/config.py:21 |
@@ -220,14 +220,14 @@ graduation thesis/
 
 | Path | Description | Purpose |
 |------|-------------|--------|
-| d:\\graduation thesis\\data | Data root directory | Stores all datasets |
-| d:\\graduation thesis\\data\\DRIVE | DRIVE dataset | Used for training and validation |
-| d:\\graduation thesis\\data\\CHASE_DB1 | CHASE_DB1 dataset | Used for generalization test |
-| d:\\graduation thesis\\data\\HRF | HRF dataset | Used for generalization test |
-| d:\\graduation thesis\\src\\results | Results directory | Stores all training and testing results |
-| d:\\graduation thesis\\src\\results\\unet_resnet_train | UNet with ResNet training results | Stores trained model and curves |
-| d:\\graduation thesis\\src\\results\\evaluation\\unet\\ResNet | UNet with ResNet evaluation results | Stores evaluation reports and visualizations |
-| d:\\graduation thesis\\src\\results\\generalization_test\\unet\\ResNet | UNet with ResNet generalization test results | Stores generalization test reports and visualizations |
+| data | Data root directory | Stores all datasets |
+| data/DRIVE | DRIVE dataset | Used for training and validation |
+| data/CHASE_DB1 | CHASE_DB1 dataset | Used for generalization test |
+| data/HRF | HRF dataset | Used for generalization test |
+| src/results | Results directory | Stores all training and testing results |
+| src/results/unet_resnet_train | UNet with ResNet training results | Stores trained model and curves |
+| src/results/evaluation/unet/ResNet | UNet with ResNet evaluation results | Stores evaluation reports and visualizations |
+| src/results/generalization_test/unet/ResNet | UNet with ResNet generalization test results | Stores generalization test reports and visualizations |
 
 ## 11. Future Improvement Directions
 
@@ -298,30 +298,7 @@ If you encounter an error not listed, please record the following information an
 - Test model performance with different backbones
 - Test model generalization ability on different datasets
 
-## 14. Deployment Guide
-
-### 14.1 Local Deployment
-
-1. Install dependencies according to the installation guide
-2. Prepare dataset
-3. Train model
-4. Run evaluation and test scripts
-
-### 14.2 Server Deployment
-
-1. Install required dependencies on the server
-2. Upload code and dataset
-3. Use screen or nohup command to run training script in the background
-4. Check training progress regularly
-
-### 14.3 Containerized Deployment
-
-1. Create Dockerfile
-2. Build Docker image
-3. Run Docker container
-4. Execute training and testing in the container
-
-## 15. Summary
+## 14. Summary
 
 This maintenance manual provides detailed implementation information of the retinal vessel segmentation model, including system installation, file organization, code structure, key components, etc. Through this manual, developers can understand the working principle of the system, perform system maintenance and expansion.
 

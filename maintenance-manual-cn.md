@@ -161,7 +161,7 @@ graduation thesis/
 |------|-----|------|------|
 | IMAGE_SIZE | 512 | 图像尺寸 | src/config.py:4 |
 | BATCH_SIZE | 6 | 批次大小 | src/config.py:5 |
-| ROOT_DIR | 'd:\\graduation thesis\\data' | 数据根目录 | src/config.py:8 |
+| ROOT_DIR | 'data' | 数据根目录 | src/config.py:8 |
 | EPOCHS | 1001 | 训练轮数 | src/config.py:18 |
 | LEARNING_RATE | 0.0001 | 学习率 | src/config.py:19 |
 | ENCODER_NAME | 'efficientnet_v2_b2' | EfficientNet编码器名称 | src/config.py:21 |
@@ -220,14 +220,14 @@ graduation thesis/
 
 | 路径 | 说明 | 用途 |
 |------|------|------|
-| d:\\graduation thesis\\data | 数据根目录 | 存放所有数据集 |
-| d:\\graduation thesis\\data\\DRIVE | DRIVE数据集 | 用于训练和验证 |
-| d:\\graduation thesis\\data\\CHASE_DB1 | CHASE_DB1数据集 | 用于泛化测试 |
-| d:\\graduation thesis\\data\\HRF | HRF数据集 | 用于泛化测试 |
-| d:\\graduation thesis\\src\\results | 结果目录 | 存放所有训练和测试结果 |
-| d:\\graduation thesis\\src\\results\\unet_resnet_train | UNet with ResNet训练结果 | 存放训练模型和曲线 |
-| d:\\graduation thesis\\src\\results\\evaluation\\unet\\ResNet | UNet with ResNet评估结果 | 存放评估报告和可视化 |
-| d:\\graduation thesis\\src\\results\\generalization_test\\unet\\ResNet | UNet with ResNet泛化测试结果 | 存放泛化测试报告和可视化 |
+| data | 数据根目录 | 存放所有数据集 |
+| data/DRIVE | DRIVE数据集 | 用于训练和验证 |
+| data/CHASE_DB1 | CHASE_DB1数据集 | 用于泛化测试 |
+| data/HRF | HRF数据集 | 用于泛化测试 |
+| src/results | 结果目录 | 存放所有训练和测试结果 |
+| src/results/unet_resnet_train | UNet with ResNet训练结果 | 存放训练模型和曲线 |
+| src/results/evaluation/unet/ResNet | UNet with ResNet评估结果 | 存放评估报告和可视化 |
+| src/results/generalization_test/unet/ResNet | UNet with ResNet泛化测试结果 | 存放泛化测试报告和可视化 |
 
 ## 11. 未来改进方向
 
@@ -298,30 +298,7 @@ graduation thesis/
 - 测试不同backbone的模型性能
 - 测试模型在不同数据集上的泛化能力
 
-## 14. 部署指南
-
-### 14.1 本地部署
-
-1. 按照安装指南安装依赖
-2. 准备数据集
-3. 训练模型
-4. 运行评估和测试脚本
-
-### 14.2 服务器部署
-
-1. 在服务器上安装所需依赖
-2. 上传代码和数据集
-3. 使用screen或nohup命令后台运行训练脚本
-4. 定期检查训练进度
-
-### 14.3 容器化部署
-
-1. 创建Dockerfile
-2. 构建Docker镜像
-3. 运行Docker容器
-4. 在容器中执行训练和测试
-
-## 15. 总结
+## 14. 总结
 
 本维护手册提供了视网膜血管分割模型的详细实现信息，包括系统安装、文件组织、代码结构、关键组件等内容。通过本手册，开发人员可以了解系统的工作原理，进行系统维护和扩展。
 
