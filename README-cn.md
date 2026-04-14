@@ -302,7 +302,7 @@ data/
 ## 🙏 致谢
 
 - [DRIVE数据集](https://drive.grand-challenge.org/) - 数字视网膜图像血管提取
-- [CHASE_DB1数据集](https://blogs.kingston.ac.uk/retinal/chasedb1/) - 英国儿童心脏与健康研究
+- [CHASE_DB1数据集](https://datasetninja.com/chase-db1) - 英国儿童心脏与健康研究
 - [HRF数据集](https://www5.cs.fau.de/research/data/fundus-images/) - 高分辨率眼底图像数据库
 
 ---

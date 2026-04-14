@@ -302,7 +302,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## 🙏 Acknowledgments
 
 - [DRIVE Dataset](https://drive.grand-challenge.org/) - Digital Retinal Images for Vessel Extraction
-- [CHASE_DB1 Dataset](https://blogs.kingston.ac.uk/retinal/chasedb1/) - Child Heart and Health Study in England
+- [CHASE_DB1 Dataset](https://datasetninja.com/chase-db1) - Child Heart and Health Study in England
 - [HRF Dataset](https://www5.cs.fau.de/research/data/fundus-images/) - High-Resolution Fundus Image Database
 
 ---
