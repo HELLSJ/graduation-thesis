@@ -71,41 +71,6 @@ This project is a deep learning-based retinal vessel segmentation system that su
 
 ---
 
-## 📊 Performance Results
-
-### DRIVE Validation Set Performance
-
-| Model | Backbone | Loss | Dice | Recall | Precision |
-|-------|----------|------|------|--------|-----------|
-| **UNet++** | EfficientNet V2 B2 | **0.5365** | **0.6539** | 0.6687 | **0.6983** |
-| **UNet++** | ResNet50 | 0.6485 | 0.6112 | 0.6462 | 0.6175 |
-| **UNet** | EfficientNet V2 B2 | 0.6658 | 0.5461 | **0.6841** | 0.6721 |
-| **UNet** | ResNet50 | 0.7073 | 0.5329 | 0.5990 | 0.6817 |
-
-**Best Model**: UNet++ with EfficientNet V2 B2 backbone achieves the highest Dice score (0.6539) and precision (0.6983) on the DRIVE validation set.
-
-### Generalization Test Results
-
-#### CHASE_DB1 Dataset
-
-| Model | Backbone | Loss | Dice | Recall | Precision |
-|-------|----------|------|------|--------|-----------|
-| **UNet** | EfficientNet V2 B2 | **0.9139** | **0.3020** | **0.2907** | 0.5887 |
-| UNet | ResNet50 | 1.0071 | 0.2520 | 0.2183 | 0.4568 |
-| UNet++ | EfficientNet V2 B2 | 1.0578 | 0.2458 | 0.1435 | **0.6941** |
-| UNet++ | ResNet50 | 1.0528 | 0.2435 | 0.1498 | 0.5598 |
-
-#### HRF Dataset
-
-| Model | Backbone | Loss | Dice | Recall | Precision |
-|-------|----------|------|------|--------|-----------|
-| UNet | EfficientNet V2 B2 | 1.0438 | 0.3790 | **0.6772** | 0.3402 |
-| UNet | ResNet50 | 1.1600 | 0.3739 | 0.6406 | 0.3199 |
-| UNet++ | EfficientNet V2 B2 | 0.9812 | 0.4100 | 0.6957 | 0.3152 |
-| **UNet++** | ResNet50 | **0.9163** | **0.4273** | 0.5595 | **0.3900** |
-
----
-
 ## 📁 Project Structure
 
 ```
@@ -331,12 +296,6 @@ data/
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
