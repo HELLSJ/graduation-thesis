@@ -57,7 +57,7 @@ def main():
         if backbone == 'resnet':
             RESULTS_DIR = 'results/unetpp_resnet_train'
         else:
-            RESULTS_DIR_DIR = 'results/unetpp_efficientnet_train'
+            RESULTS_DIR = 'results/unetpp_efficientnet_train'
     
     # Create results directory if it doesn't exist
     if not os.path.exists(RESULTS_DIR):
