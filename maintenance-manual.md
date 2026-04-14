@@ -64,13 +64,13 @@ This project is written in Python and does not require compilation steps. Simply
 
 | Dependency | Version Requirement | Purpose |
 |------------|---------------------|--------|
-| tensorflow | Latest | Deep learning framework |
-| keras | Latest | High-level neural network API |
-| medicai | Latest | Medical image processing library |
-| pillow | Latest | Image processing |
-| numpy | Latest | Numerical computation |
-| matplotlib | Latest | Data visualization |
-| pandas | Latest | Data processing |
+| tensorflow | 2.20.0 | Deep learning framework |
+| keras | 3.12.0 | High-level neural network API |
+| medicai | 0.0.3 | Medical image processing library |
+| pillow | 10.4.0 | Image processing |
+| numpy | 1.26.4 | Numerical computation |
+| matplotlib | 3.9.2 | Data visualization |
+| pandas | 2.2.2 | Data processing |
 
 ## 5. System File Organization
 
