@@ -1,236 +1,245 @@
-# 视网膜血管分割项目
+# 🩸 Retinal Vessel Segmentation Project
 
-## 项目概述
+<div align="center">
 
-本项目是一个基于深度学习的视网膜血管分割系统，支持UNet和UNet++两种模型架构，每种架构都可以使用EfficientNet或ResNet作为backbone。系统主要用于医学图像处理中的视网膜血管分割任务，可以帮助医生更准确地诊断视网膜相关疾病。
+[![Python](https://img.shields.io/badge/Python-3.7%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
+[![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange?logo=tensorflow&logoColor=white)](https://www.tensorflow.org/)
+[![Keras](https://img.shields.io/badge/Keras-3.x-red?logo=keras&logoColor=white)](https://keras.io/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/HELLSJ/graduation-thesis?style=social)](https://github.com/HELLSJ/graduation-thesis)
 
-## 项目结构
+**A Deep Learning-Based Retinal Vessel Segmentation System**
+
+[English](#overview) | [中文文档](README-cn.md)
+
+</div>
+
+---
+
+## 📋 Overview
+
+This project is a deep learning-based retinal vessel segmentation system that supports **UNet** and **UNet++** architectures with **EfficientNet** or **ResNet** backbones. The system is designed for medical image processing tasks, specifically for segmenting retinal blood vessels, which can assist doctors in diagnosing retinal-related diseases more accurately.
+
+### ✨ Key Features
+
+- 🔬 **Multiple Model Architectures**: UNet and UNet++ with different backbones
+- 🎯 **High Performance**: State-of-the-art segmentation accuracy
+- 📊 **Comprehensive Evaluation**: Training, validation, and generalization testing
+- 🖼️ **Visualization**: Automatic generation of training curves and prediction results
+- 📁 **Organized Output**: Structured result directories with detailed reports
+
+---
+
+## 🏗️ Model Architecture
+
+### Supported Models
+
+| Model | Backbone | Parameters | Description |
+|-------|----------|------------|-------------|
+| **UNet** | EfficientNet V2 B2 | ~3.5M | Lightweight model for resource-constrained environments |
+| **UNet** | ResNet50 | ~25M | Deeper model with potentially better performance |
+| **UNet++** | EfficientNet V2 B2 | ~3.5M | Advanced architecture with nested skip pathways |
+| **UNet++** | ResNet50 | ~25M | Most powerful combination for complex segmentation |
+
+### Architecture Diagram
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Input Image (512x512x3)                   │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    Encoder (Backbone)                        │
+│  ┌─────────────────┐        ┌─────────────────┐            │
+│  │ EfficientNet    │   OR   │ ResNet50        │            │
+│  │ V2 B2           │        │                 │            │
+│  └─────────────────┘        └─────────────────┘            │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    Decoder with Skip Connections             │
+│         (UNet or UNet++ Architecture)                       │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    Output Mask (512x512x1)                   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 📁 Project Structure
 
 ```
 graduation thesis/
-├── src/                      # 源代码文件夹
-│   ├── __pycache__/         # 缓存文件
-│   ├── results/             # 结果目录
-│   │   ├── evaluation/      # 评估结果
-│   │   ├── generalization_test/  # 泛化测试结果
-│   │   ├── unet_efficientnet_train/  # UNet with EfficientNet训练结果
-│   │   ├── unet_resnet_train/  # UNet with ResNet训练结果
-│   │   ├── unetpp_efficientnet_train/  # UNet++ with EfficientNet训练结果
-│   │   ├── unetpp_resnet_train/  # UNet++ with ResNet训练结果
-│   │   └── comprehensive_evaluation_report.txt  # 综合评估报告
-│   ├── callbacks.py         # 回调函数
-│   ├── config.py            # 配置参数
-│   ├── data_loader.py       # 数据加载和预处理
-│   ├── evaluate_model_unet.py  # UNet评估脚本
-│   ├── evaluate_model_unetpp.py  # UNet++评估脚本
-│   ├── requirements.txt     # 依赖包列表
-│   ├── test_generalization_unet.py  # UNet泛化测试脚本
-│   ├── test_generalization_unetpp.py  # UNet++泛化测试脚本
-│   ├── unet_model.py        # UNet模型定义
-│   ├── unet_train.py        # UNet训练脚本
-│   ├── unetpp_model.py      # UNet++模型定义
-│   └── unetpp_train.py      # UNet++训练脚本
-├── data/                   # 数据集文件夹
-│   ├── CHASE_DB1/          # CHASE_DB1数据集
-│   ├── DRIVE/              # DRIVE数据集
-│   ├── HRF/                # HRF数据集
-│   └── STARE/              # STARE数据集
-├── 用户手册.md              # 用户手册
-├── 维护手册.md              # 维护手册
-└── README.md             # 项目说明文档
+├── src/                              # Source code
+│   ├── results/                      # Training and evaluation results
+│   │   ├── evaluation/               # Evaluation results
+│   │   ├── generalization_test/      # Generalization test results
+│   │   ├── unet_efficientnet_train/  # UNet + EfficientNet results
+│   │   ├── unet_resnet_train/        # UNet + ResNet results
+│   │   ├── unetpp_efficientnet_train/ # UNet++ + EfficientNet results
+│   │   └── unetpp_resnet_train/      # UNet++ + ResNet results
+│   ├── callbacks.py                  # Training callbacks
+│   ├── config.py                     # Configuration parameters
+│   ├── data_loader.py                # Data loading utilities
+│   ├── evaluate_model_unet.py        # UNet evaluation script
+│   ├── evaluate_model_unetpp.py      # UNet++ evaluation script
+│   ├── test_generalization_unet.py   # UNet generalization test
+│   ├── test_generalization_unetpp.py # UNet++ generalization test
+│   ├── unet_model.py                 # UNet model definition
+│   ├── unet_train.py                 # UNet training script
+│   ├── unetpp_model.py               # UNet++ model definition
+│   └── unetpp_train.py               # UNet++ training script
+├── data/                             # Dataset directory
+│   ├── CHASE_DB1/                    # CHASE_DB1 dataset
+│   ├── DRIVE/                        # DRIVE dataset
+│   └── HRF/                          # HRF dataset
+├── user-manual.md                    # User manual (English)
+├── user-manual-cn.md                 # User manual (Chinese)
+├── maintenance-manual.md             # Maintenance manual (English)
+├── maintenance-manual-cn.md          # Maintenance manual (Chinese)
+└── README.md                         # This file
 ```
 
-## 模型架构
+---
 
-本项目实现了两种模型架构，每种架构都支持两种backbone：
+## 🚀 Quick Start
 
-### 1. UNet模型
-- **EfficientNet V2 B2 backbone**：轻量级模型，适合资源受限环境
-- **ResNet50 backbone**：更深层的模型，可能获得更好的性能
+### Prerequisites
 
-### 2. UNet++模型
-- **EfficientNet V2 B2 backbone**：轻量级模型，适合资源受限环境
-- **ResNet50 backbone**：更深层的模型，可能获得更好的性能
+- Python 3.7 or higher
+- TensorFlow 2.x
+- CUDA-enabled GPU (recommended)
 
-## 安装依赖
+### Installation
 
-首先安装必要的依赖包：
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/HELLSJ/graduation-thesis.git
+   cd graduation-thesis
+   ```
+
+2. **Create virtual environment**
+   ```bash
+   python -m venv venv
+   # Windows
+   venv\Scripts\activate
+   # Linux/Mac
+   source venv/bin/activate
+   ```
+
+3. **Install dependencies**
+   ```bash
+   cd src
+   pip install -r requirements.txt
+   ```
+
+### Training
+
+#### UNet Model
 
 ```bash
-cd src
-pip install -r requirements.txt
+# Using EfficientNet backbone (default)
+python unet_train.py
+
+# Using ResNet backbone
+python unet_train.py --backbone resnet
+
+# Custom results directory
+python unet_train.py --backbone resnet --results-dir custom_results
 ```
 
-## 训练模型
+#### UNet++ Model
 
-### 训练UNet模型
+```bash
+# Using EfficientNet backbone (default)
+python unetpp_train.py
 
-- 使用EfficientNet backbone（默认）：
-  ```bash
-  cd src
-  python unet_train.py
-  ```
+# Using ResNet backbone
+python unetpp_train.py --backbone resnet
+```
 
-- 使用ResNet backbone：
-  ```bash
-  cd src
-  python unet_train.py --backbone resnet
-  ```
+### Evaluation
 
-- 指定自定义结果目录：
-  ```bash
-  cd src
-  python unet_train.py --backbone resnet --results-dir custom_results
-  ```
+```bash
+# Evaluate UNet model
+python evaluate_model_unet.py --backbone resnet
 
-### 训练UNet++模型
+# Evaluate UNet++ model
+python evaluate_model_unetpp.py --backbone resnet
+```
 
-- 使用EfficientNet backbone（默认）：
-  ```bash
-  cd src
-  python unetpp_train.py
-  ```
+### Generalization Testing
 
-- 使用ResNet backbone：
-  ```bash
-  cd src
-  python unetpp_train.py --backbone resnet
-  ```
+```bash
+# Test UNet model generalization
+python test_generalization_unet.py --backbone resnet
 
-- 指定自定义结果目录：
-  ```bash
-  cd src
-  python unetpp_train.py --backbone resnet --results-dir custom_results
-  ```
+# Test UNet++ model generalization
+python test_generalization_unetpp.py --backbone resnet
+```
 
-## 评估模型
+---
 
-### 评估UNet模型
+## 📊 Training Configuration
 
-- 评估EfficientNet backbone模型（默认）：
-  ```bash
-  cd src
-  python evaluate_model_unet.py
-  ```
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| **Dataset** | DRIVE | Retinal vessel segmentation dataset |
+| **Image Size** | 512×512 | Input image dimensions |
+| **Batch Size** | 6 | Training batch size |
+| **Epochs** | 1001 | Maximum training epochs |
+| **Learning Rate** | 0.0001 | Adam optimizer learning rate |
+| **Early Stopping** | 200 epochs | Stop if no improvement |
+| **Prediction Interval** | 40 epochs | Save predictions every N epochs |
 
-- 评估ResNet backbone模型：
-  ```bash
-  cd src
-  python evaluate_model_unet.py --backbone resnet
-  ```
+---
 
-### 评估UNet++模型
+## 📈 Results
 
-- 评估EfficientNet backbone模型（默认）：
-  ```bash
-  cd src
-  python evaluate_model_unetpp.py
-  ```
+### Training Outputs
 
-- 评估ResNet backbone模型：
-  ```bash
-  cd src
-  python evaluate_model_unetpp.py --backbone resnet
-  ```
+Each training session generates the following files:
 
-## 测试泛化能力
+| File | Description |
+|------|-------------|
+| `best_model.keras` | Best model weights based on validation Dice score |
+| `training_summary.txt` | Human-readable training summary |
+| `training_record.json` | Detailed training metrics in JSON format |
+| `loss_curve_large.png` | Training and validation loss curves |
+| `iou_curve_large.png` | Training and validation IoU curves |
+| `dice_curve_large.png` | Training and validation Dice curves |
+| `prediction_epoch_*.png` | Prediction results at different epochs |
 
-### 测试UNet模型泛化能力
+### Result Directories
 
-- 测试EfficientNet backbone模型（默认）：
-  ```bash
-  cd src
-  python test_generalization_unet.py
-  ```
+```
+results/
+├── unet_efficientnet_train/          # UNet + EfficientNet
+├── unet_resnet_train/                # UNet + ResNet
+├── unetpp_efficientnet_train/        # UNet++ + EfficientNet
+├── unetpp_resnet_train/              # UNet++ + ResNet
+├── evaluation/                       # Evaluation results
+│   ├── unet/EfficientNet/
+│   ├── unet/ResNet/
+│   ├── unetpp/EfficientNet/
+│   └── unetpp/ResNet/
+└── generalization_test/              # Generalization test results
+    ├── unet/EfficientNet/
+    ├── unet/ResNet/
+    ├── unetpp/EfficientNet/
+    └── unetpp/RESNET/
+```
 
-- 测试ResNet backbone模型：
-  ```bash
-  cd src
-  python test_generalization_unet.py --backbone resnet
-  ```
+---
 
-### 测试UNet++模型泛化能力
+## ⚙️ Configuration
 
-- 测试EfficientNet backbone模型（默认）：
-  ```bash
-  cd src
-  python test_generalization_unetpp.py
-  ```
-
-- 测试ResNet backbone模型：
-  ```bash
-  cd src
-  python test_generalization_unetpp.py --backbone resnet
-  ```
-
-## 训练配置
-
-- **数据集**: DRIVE视网膜血管分割数据集
-- **模型**: 
-  - UNet with EfficientNet V2 B2 backbone
-  - UNet with ResNet50 backbone
-  - UNet++ with EfficientNet V2 B2 backbone
-  - UNet++ with ResNet50 backbone
-- **图像大小**: 512x512
-- **批次大小**: 6
-- **训练轮数**: 1001
-- **学习率**: 0.0001
-- **预测可视化**: 每40个epoch生成一次预测图片
-
-## 输出结果
-
-### 训练结果
-
-训练结果保存在以下目录：
-- UNet with EfficientNet：`src/results/unet_efficientnet_train/`
-- UNet with ResNet：`src/results/unet_resnet_train/`
-- UNet++ with EfficientNet：`src/results/unetpp_efficientnet_train/`
-- UNet++ with ResNet：`src/results/unetpp_resnet_train/`
-
-每个目录包含：
-- `best_model.keras`：最佳模型权重
-- `training_summary.txt`：训练总结
-- `training_record.json`：详细训练记录
-- `loss_curve_large.png`：损失曲线
-- `iou_curve_large.png`：IoU曲线
-- `dice_curve_large.png`：Dice曲线
-- `prediction_epoch_*.png`：不同 epoch 的预测结果
-
-### 评估结果
-
-评估结果保存在以下目录：
-- UNet with EfficientNet：`src/results/evaluation/unet/EfficientNet/`
-- UNet with ResNet：`src/results/evaluation/unet/ResNet/`
-- UNet++ with EfficientNet：`src/results/evaluation/unetpp/EfficientNet/`
-- UNet++ with ResNet：`src/results/evaluation/unetpp/ResNet/`
-
-每个目录包含：
-- `evaluation_report.txt`：评估报告
-- `evaluation_visualization_*.png`：评估可视化结果
-
-### 泛化测试结果
-
-泛化测试结果保存在以下目录：
-- UNet with EfficientNet：`src/results/generalization_test/unet/EfficientNet/`
-- UNet with ResNet：`src/results/generalization_test/unet/ResNet/`
-- UNet++ with EfficientNet：`src/results/generalization_test/unetpp/EfficientNet/`
-- UNet++ with ResNet：`src/results/generalization_test/unetpp/RESNET/`
-
-每个目录包含：
-- `generalization_summary.txt`：泛化测试总结
-- `CHASE_DB1_evaluation_report.txt`：CHASE_DB1数据集评估报告
-- `HRF_evaluation_report.txt`：HRF数据集评估报告
-- `*_visualization_*.png`：可视化结果
-
-### 综合评估报告
-
-综合评估报告保存在：`src/results/comprehensive_evaluation_report.txt`
-
-该报告包含所有模型在DRIVE验证集和泛化测试集上的性能对比。
-
-## 配置参数
-
-可以在`src/config.py`中修改训练参数：
+Edit `src/config.py` to customize training parameters:
 
 ```python
 # Image and batch settings
@@ -251,15 +260,17 @@ ACTIVATION = 'sigmoid'
 EPOCHS = 1001
 LEARNING_RATE = 0.0001
 
+# Backbone options
 ENCODER_NAME = 'efficientnet_v2_b2'
-# Backbone model
 ENCODER_NAME_REFIX = 'resnet50'
 ENCODER_DEPTH = 4
 ```
 
-## 数据集路径
+---
 
-确保数据集已放置在正确的位置：
+## 📦 Dataset Structure
+
+Ensure your dataset is organized as follows:
 
 ```
 data/
@@ -280,19 +291,54 @@ data/
     └── mask/
 ```
 
-## 注意事项
+---
 
-- 训练过程中会自动创建相应的结果目录
-- 预测图片会每40个epoch保存一次
-- 最佳模型会根据验证集dice分数自动保存
-- 训练使用了早停机制，如果200个epoch没有改善会自动停止
-- UNet++模型包含更多的网络层，参数量较大，训练时间更长
-- 泛化测试会在CHASE_DB1和HRF数据集上评估模型性能
+## 📝 Notes
 
-## 文档
+- ✅ Result directories are automatically created during training
+- ✅ Prediction images are saved every 40 epochs
+- ✅ Best model is automatically saved based on validation Dice score
+- ✅ Early stopping mechanism prevents overfitting
+- ⚠️ UNet++ has more parameters and requires longer training time
+- ⚠️ Generalization testing evaluates performance on unseen datasets
 
-- **用户手册**：`user-manual.md` - 详细的使用说明（英文）
-- **用户手册（中文）**：`user-manual-cn.md` - 详细的使用说明（中文）
-- **维护手册**：`maintenance-manual.md` - 系统实现细节和维护指南（英文）
-- **维护手册（中文）**：`maintenance-manual-cn.md` - 系统实现细节和维护指南（中文）
+---
 
+## 📚 Documentation
+
+| Document | Language | Description |
+|----------|----------|-------------|
+| [User Manual](user-manual.md) | English | Detailed usage instructions |
+| [User Manual](user-manual-cn.md) | Chinese | 详细使用说明 |
+| [Maintenance Manual](maintenance-manual.md) | English | System implementation details |
+| [Maintenance Manual](maintenance-manual-cn.md) | Chinese | 系统实现细节和维护指南 |
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- [DRIVE Dataset](https://drive.grand-challenge.org/) - Digital Retinal Images for Vessel Extraction
+- [CHASE_DB1 Dataset](https://blogs.kingston.ac.uk/retinal/chasedb1/) - Child Heart and Health Study in England
+- [HRF Dataset](https://www5.cs.fau.de/research/data/fundus-images/) - High-Resolution Fundus Image Database
+
+---
+
+<div align="center">
+
+**Made with ❤️ for Medical Image Analysis**
+
+[⬆ Back to Top](#-retinal-vessel-segmentation-project)
+
+</div>
