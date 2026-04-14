@@ -49,10 +49,10 @@
 将项目克隆到本地目录：
 
 ```bash
-git clone <项目地址>
-cd graduation thesis
+git clone https://github.com/HELLSJ/graduation-thesis.git
+cd graduation-thesis
 ```
-
+![[git-clone.png]]
 ### 3.2 创建虚拟环境
 
 ```bash
@@ -74,7 +74,7 @@ venv\Scripts\activate
 cd src
 pip install -r requirements.txt
 ```
-
+![[environment_create.png]]
 ### 3.4 准备数据集
 
 系统使用以下数据集：
@@ -322,17 +322,18 @@ pip install -r requirements.txt
 cd src
 python unet_train.py --backbone resnet
 ```
-
+![[unet_resnet_train.png]]
 ### 7.2 评估UNet with ResNet模型
 
 ```bash
 cd src
 python evaluate_model_unet.py --backbone resnet
 ```
-
+![[unet_resnet_eval.png]]
 ### 7.3 测试UNet with ResNet模型泛化能力
 
 ```bash
 cd src
 python test_generalization_unet.py --backbone resnet
 ```
+![[unet_resnet_test.png]]
