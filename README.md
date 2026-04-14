@@ -3,8 +3,8 @@
 <div align="center">
 
 [![Python](https://img.shields.io/badge/Python-3.7%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
-[![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange?logo=tensorflow&logoColor=white)](https://www.tensorflow.org/)
-[![Keras](https://img.shields.io/badge/Keras-3.x-red?logo=keras&logoColor=white)](https://keras.io/)
+[![TensorFlow](https://img.shields.io/badge/TensorFlow-2.20.0-orange?logo=tensorflow&logoColor=white)](https://www.tensorflow.org/)
+[![Keras](https://img.shields.io/badge/Keras-3.12.0-red?logo=keras&logoColor=white)](https://keras.io/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/HELLSJ/graduation-thesis?style=social)](https://github.com/HELLSJ/graduation-thesis)
 
@@ -23,8 +23,8 @@ This project is a deep learning-based retinal vessel segmentation system that su
 ### ✨ Key Features
 
 - 🔬 **Multiple Model Architectures**: UNet and UNet++ with different backbones
-- 🎯 **High Performance**: State-of-the-art segmentation accuracy
-- 📊 **Comprehensive Evaluation**: Training, validation, and generalization testing
+- 🎯 **High Performance**: UNet++ with EfficientNet achieves 0.6539 Dice score on DRIVE validation set
+- 📊 **Comprehensive Evaluation**: Training, validation, and generalization testing on multiple datasets
 - 🖼️ **Visualization**: Automatic generation of training curves and prediction results
 - 📁 **Organized Output**: Structured result directories with detailed reports
 
@@ -36,10 +36,10 @@ This project is a deep learning-based retinal vessel segmentation system that su
 
 | Model | Backbone | Parameters | Description |
 |-------|----------|------------|-------------|
-| **UNet** | EfficientNet V2 B2 | ~3.5M | Lightweight model for resource-constrained environments |
-| **UNet** | ResNet50 | ~25M | Deeper model with potentially better performance |
-| **UNet++** | EfficientNet V2 B2 | ~3.5M | Advanced architecture with nested skip pathways |
-| **UNet++** | ResNet50 | ~25M | Most powerful combination for complex segmentation |
+| **UNet** | EfficientNet V2 B2 | ~9.2M | Lightweight model with good balance |
+| **UNet** | ResNet50 | ~32.5M | Deeper model with rich features |
+| **UNet++** | EfficientNet V2 B2 | ~9.2M | Advanced architecture with nested skip pathways |
+| **UNet++** | ResNet50 | ~32.5M | Most powerful combination for complex segmentation |
 
 ### Architecture Diagram
 
@@ -68,6 +68,41 @@ This project is a deep learning-based retinal vessel segmentation system that su
 │                    Output Mask (512x512x1)                   │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## 📊 Performance Results
+
+### DRIVE Validation Set Performance
+
+| Model | Backbone | Loss | Dice | Recall | Precision |
+|-------|----------|------|------|--------|-----------|
+| **UNet++** | EfficientNet V2 B2 | **0.5365** | **0.6539** | 0.6687 | **0.6983** |
+| **UNet++** | ResNet50 | 0.6485 | 0.6112 | 0.6462 | 0.6175 |
+| **UNet** | EfficientNet V2 B2 | 0.6658 | 0.5461 | **0.6841** | 0.6721 |
+| **UNet** | ResNet50 | 0.7073 | 0.5329 | 0.5990 | 0.6817 |
+
+**Best Model**: UNet++ with EfficientNet V2 B2 backbone achieves the highest Dice score (0.6539) and precision (0.6983) on the DRIVE validation set.
+
+### Generalization Test Results
+
+#### CHASE_DB1 Dataset
+
+| Model | Backbone | Loss | Dice | Recall | Precision |
+|-------|----------|------|------|--------|-----------|
+| **UNet** | EfficientNet V2 B2 | **0.9139** | **0.3020** | **0.2907** | 0.5887 |
+| UNet | ResNet50 | 1.0071 | 0.2520 | 0.2183 | 0.4568 |
+| UNet++ | EfficientNet V2 B2 | 1.0578 | 0.2458 | 0.1435 | **0.6941** |
+| UNet++ | ResNet50 | 1.0528 | 0.2435 | 0.1498 | 0.5598 |
+
+#### HRF Dataset
+
+| Model | Backbone | Loss | Dice | Recall | Precision |
+|-------|----------|------|------|--------|-----------|
+| UNet | EfficientNet V2 B2 | 1.0438 | 0.3790 | **0.6772** | 0.3402 |
+| UNet | ResNet50 | 1.1600 | 0.3739 | 0.6406 | 0.3199 |
+| UNet++ | EfficientNet V2 B2 | 0.9812 | 0.4100 | 0.6957 | 0.3152 |
+| **UNet++** | ResNet50 | **0.9163** | **0.4273** | 0.5595 | **0.3900** |
 
 ---
 
@@ -112,7 +147,7 @@ graduation thesis/
 ### Prerequisites
 
 - Python 3.7 or higher
-- TensorFlow 2.x
+- TensorFlow 2.20.0
 - CUDA-enabled GPU (recommended)
 
 ### Installation
@@ -199,9 +234,7 @@ python test_generalization_unetpp.py --backbone resnet
 
 ---
 
-## 📈 Results
-
-### Training Outputs
+## 📈 Training Outputs
 
 Each training session generates the following files:
 
@@ -215,26 +248,6 @@ Each training session generates the following files:
 | `dice_curve_large.png` | Training and validation Dice curves |
 | `prediction_epoch_*.png` | Prediction results at different epochs |
 
-### Result Directories
-
-```
-results/
-├── unet_efficientnet_train/          # UNet + EfficientNet
-├── unet_resnet_train/                # UNet + ResNet
-├── unetpp_efficientnet_train/        # UNet++ + EfficientNet
-├── unetpp_resnet_train/              # UNet++ + ResNet
-├── evaluation/                       # Evaluation results
-│   ├── unet/EfficientNet/
-│   ├── unet/ResNet/
-│   ├── unetpp/EfficientNet/
-│   └── unetpp/ResNet/
-└── generalization_test/              # Generalization test results
-    ├── unet/EfficientNet/
-    ├── unet/ResNet/
-    ├── unetpp/EfficientNet/
-    └── unetpp/RESNET/
-```
-
 ---
 
 ## ⚙️ Configuration
@@ -247,7 +260,7 @@ IMAGE_SIZE = 512
 BATCH_SIZE = 6
 
 # Dataset paths
-ROOT_DIR = 'd:\\graduation thesis\\data'
+ROOT_DIR = 'data'
 TRAIN_IMAGES_DIR = 'DRIVE/training/images'
 TRAIN_MASKS_DIR = 'DRIVE/training/1st_manual'
 
