@@ -130,6 +130,13 @@ cd src
 python unet_train.py --backbone resnet --results-dir custom_results
 ```
 
+- Specify custom model directory:
+
+```bash
+cd src
+python unet_train.py --backbone resnet --model-dir path/to/model
+```
+
 #### 4.1.2 Train UNet++ Model
 
 - Using EfficientNet backbone (default):
@@ -151,6 +158,13 @@ python unetpp_train.py --backbone resnet
 ```bash
 cd src
 python unetpp_train.py --backbone resnet --results-dir custom_results
+```
+
+- Specify custom model directory:
+
+```bash
+cd src
+python unetpp_train.py --backbone resnet --model-dir path/to/model
 ```
 
 ### 4.2 Evaluate Model
@@ -200,6 +214,23 @@ python evaluate_model_unetpp.py
 cd src
 python evaluate_model_unetpp.py --backbone resnet
 ```
+
+- Specify custom results directory:
+
+```bash
+cd src
+python evaluate_model_unetpp.py --backbone resnet --results-dir custom_results
+```
+
+- Specify custom model directory:
+
+```bash
+cd src
+python evaluate_model_unetpp.py --backbone resnet --model-dir path/to/model
+```
+
+Note: The evaluation script needs to read the best_model saved after training. If you run the evaluation script without training first, you will see the following error:
+![[eval error.png]]
 
 ### 4.3 Test Generalization Ability
 
@@ -262,6 +293,9 @@ python test_generalization_unetpp.py --backbone resnet --results-dir custom_resu
 cd src
 python test_generalization_unetpp.py --backbone resnet --model-dir path/to/model
 ```
+
+Note: The generalization test script needs to read the best_model saved after training. If you run the test script without training first, you will see the following error:
+![[test_error.png]]
 
 ## 5. Results View
 

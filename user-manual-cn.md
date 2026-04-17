@@ -130,6 +130,13 @@ cd src
 python unet_train.py --backbone resnet --results-dir custom_results
 ```
 
+- 指定自定义模型目录：
+
+```bash
+cd src
+python unet_train.py --backbone resnet --model-dir path/to/model
+```
+
 #### 4.1.2 训练UNet++模型
 
 - 使用EfficientNet backbone（默认）：
@@ -151,6 +158,13 @@ python unetpp_train.py --backbone resnet
 ```bash
 cd src
 python unetpp_train.py --backbone resnet --results-dir custom_results
+```
+
+- 指定自定义模型目录：
+
+```bash
+cd src
+python unetpp_train.py --backbone resnet --model-dir path/to/model
 ```
 
 ### 4.2 评估模型
@@ -200,6 +214,23 @@ python evaluate_model_unetpp.py
 cd src
 python evaluate_model_unetpp.py --backbone resnet
 ```
+
+- 指定自定义结果目录：
+
+```bash
+cd src
+python evaluate_model_unetpp.py --backbone resnet --results-dir custom_results
+```
+
+- 指定自定义模型目录：
+
+```bash
+cd src
+python evaluate_model_unetpp.py --backbone resnet --model-dir path/to/model
+```
+
+注意：评估代码需要读取你训练后保存的best_model，所以如果在没训练的情况下进行评估，会出现下面的提示
+![[eval error.png]]
 
 ### 4.3 测试泛化能力
 
@@ -263,6 +294,8 @@ cd src
 python test_generalization_unetpp.py --backbone resnet --model-dir path/to/model
 ```
 
+注意：泛化测试代码需要读取你训练后保存的best_model，所以如果在没训练的情况下进行测试，会出现下面的提示
+![[test_error.png]]
 ## 5. 结果查看
 
 ### 5.1 训练结果

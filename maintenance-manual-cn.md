@@ -261,8 +261,6 @@ cd src && python evaluate_model_unet.py --backbone resnet --results-dir custom_r
 # 指定自定义模型目录
 cd src && python evaluate_model_unet.py --backbone resnet --model-dir path/to/model
 ```
-注意：评估代码需要读取你训练后保存的best_model，所以如果在没训练的情况下进行训练，会出现下面的提示
-![[eval error.png]]
 
 #### 9.6.3 泛化测试脚本 (test_generalization_unet.py, test_generalization_unetpp.py)
 
@@ -301,8 +299,6 @@ cd src && python test_generalization_unetpp.py --backbone resnet --model-dir pat
 - UNet++ with EfficientNet：`results/unetpp_efficientnet_train`
 - UNet++ with ResNet：`results/unetpp_resnet_train`
 
-注意：测试代码需要读取你训练后保存的best_model，所以如果在没训练的情况下进行训练，会出现下面的提示
-![[test_error.png]]
 ## 10. 文件路径
 
 | 路径 | 说明 | 用途 |
