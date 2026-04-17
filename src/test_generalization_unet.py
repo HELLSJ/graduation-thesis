@@ -20,9 +20,12 @@ import argparse
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+from matplotlib.patches import Rectangle
 import keras
 import medicai
 from medicai.utils import GradCAM
+import cv2
 from unet_model import build_model, compile_model
 from config import LEARNING_RATE, ROOT_DIR
 
@@ -275,102 +278,180 @@ def load_trained_model(backbone, model_dir):
     print(f"Model loaded successfully from {model_path}")
     return model
 
-def visualize_results(model, dataset, save_dir, dataset_name, backbone):
-    """可视化评估结果"""
-    # 初始化Grad-CAM
-    cam = None
+
+def find_interesting_regions(pred_mask, gt_mask):
+    pred_np = pred_mask.numpy() if hasattr(pred_mask, 'numpy') else pred_mask
+    gt_np = gt_mask.numpy() if hasattr(gt_mask, 'numpy') else gt_mask
+    pred_binary = (pred_np.squeeze() > 0.5).astype(np.uint8)
+    gt_binary = (gt_np.squeeze() > 0.5).astype(np.uint8)
+    diff = np.abs(pred_binary.astype(int) - gt_binary.astype(int))
+    kernel = np.ones((15, 15), np.uint8)
+    diff_dilated = cv2.dilate(diff.astype(np.uint8) * 255, kernel, iterations=1)
+    contours, _ = cv2.findContours(diff_dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    regions = []
+    for contour in contours:
+        x, y, w, h = cv2.boundingRect(contour)
+        if w > 30 and h > 30:
+            regions.append((x, y, w, h))
+    return regions[:3]
+
+
+def find_vessel_bifurcations(mask, min_distance=20):
+    mask_np = mask.numpy() if hasattr(mask, 'numpy') else mask
+    mask_uint8 = (mask_np.squeeze() * 255).astype(np.uint8)
     try:
-        # 使用与notebook相同的target_layer
-        target_layer = 'decoder_stage1_conv_2_activation'
-        
-        # 检查layer是否存在
-        layer_exists = False
-        for layer in model.layers:
-            if layer.name == target_layer:
-                layer_exists = True
+        skeleton = cv2.ximgproc.thinning(mask_uint8)
+    except AttributeError:
+        kernel = np.ones((3, 3), np.uint8)
+        eroded = cv2.erode(mask_uint8, kernel, iterations=1)
+        skeleton = eroded
+    corners = cv2.goodFeaturesToTrack(skeleton, maxCorners=10, qualityLevel=0.01, minDistance=min_distance)
+    bifurcations = []
+    if corners is not None:
+        for corner in corners:
+            x, y = corner.ravel()
+            bifurcations.append((int(x), int(y)))
+    return bifurcations
+
+
+def find_thin_vessel_regions(mask, threshold=0.3):
+    mask_np = mask.numpy() if hasattr(mask, 'numpy') else mask
+    mask_uint8 = (mask_np.squeeze() * 255).astype(np.uint8)
+    dist_transform = cv2.distanceTransform(mask_uint8, cv2.DIST_L2, 5)
+    thin_regions = dist_transform < (dist_transform.max() * threshold)
+    contours, _ = cv2.findContours(thin_regions.astype(np.uint8) * 255, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    regions = []
+    for contour in contours:
+        x, y, w, h = cv2.boundingRect(contour)
+        if w > 20 and h > 20:
+            regions.append((x, y, w, h))
+    return regions[:5]
+
+
+def compute_gradcam(model, image):
+    target_layer = None
+    for layer in reversed(model.layers):
+        try:
+            output_shape = layer.output.shape if hasattr(layer.output, 'shape') else None
+            if output_shape is not None and len(output_shape) == 4 and 'conv' in layer.name.lower():
+                target_layer = layer.name
                 break
-        
-        if not layer_exists:
-            # 自动找到合适的卷积层作为备选
-            print(f"Layer {target_layer} not found, searching for alternative...")
-            target_layer = None
-            for layer in reversed(model.layers):
-                if len(layer.output_shape) == 4 and 'conv' in layer.name.lower():
-                    target_layer = layer.name
-                    print(f"Using alternative layer: {target_layer}")
-                    break
-            
-            if target_layer is None:
-                target_layer = model.layers[-2].name
-                print(f"Using fallback layer: {target_layer}")
-        
-        # 创建Grad-CAM
-        cam = GradCAM(
-            model=model,
-            target_layer=target_layer,
-            task_type='auto'
-        )
-        print("Grad-CAM initialized successfully")
+        except:
+            continue
+    if target_layer is None:
+        for layer in reversed(model.layers):
+            if 'conv' in layer.name.lower():
+                target_layer = layer.name
+                break
+    if target_layer is None:
+        target_layer = model.layers[-2].name
+    try:
+        cam = GradCAM(model=model, target_layer=target_layer, task_type='auto')
+        heatmap = cam.compute_heatmap(image)
+        return heatmap[0]
     except Exception as e:
-        print(f"Error initializing Grad-CAM: {e}")
-        cam = None
-    
-    # 获取数据
+        print(f"Grad-CAM error: {e}")
+        return np.zeros((512, 512))
+
+
+def visualize_results(model, dataset, save_dir, dataset_name, backbone):
+    """增强版可视化评估结果"""
     x, y = next(iter(dataset))
     y_pred = model.predict(x)
     
-    # 计算Grad-CAM
-    heatmap = None
-    if cam is not None:
-        try:
-            heatmap = cam.compute_heatmap(x)
-        except Exception as e:
-            print(f"Error computing Grad-CAM: {e}")
-    
-    # 可视化
     n = min(4, len(x))
-    fig, axes = plt.subplots(n, 5, figsize=(16, 4 * n))
-    
     for i in range(n):
-        # 原始图像
-        ax1 = axes[i, 0]
-        ax1.imshow(x[i])
-        ax1.set_title(f"Image {i+1}")
-        ax1.axis("off")
+        image_np = x[i].numpy() if hasattr(x[i], 'numpy') else x[i]
+        gt_mask_np = y[i].numpy() if hasattr(y[i], 'numpy') else y[i]
+        pred_mask_np = y_pred[i]
         
-        # 真实掩码
-        ax2 = axes[i, 1]
-        ax2.imshow(y[i], cmap='gray')
-        ax2.set_title(f"GT Mask {i+1}")
-        ax2.axis("off")
+        heatmap = compute_gradcam(model, tf.expand_dims(x[i], 0))
+        interesting_regions = find_interesting_regions(pred_mask_np, gt_mask_np)
+        bifurcations = find_vessel_bifurcations(gt_mask_np)
+        thin_regions = find_thin_vessel_regions(gt_mask_np)
         
-        # 预测掩码
-        ax3 = axes[i, 2]
-        ax3.imshow((y_pred[i] > 0.5).astype("int32"), cmap='gray')
-        ax3.set_title(f"Pred Mask {i+1}")
-        ax3.axis("off")
+        fig = plt.figure(figsize=(24, 10))
+        gs = fig.add_gridspec(2, 5, hspace=0.25, wspace=0.2)
         
-        # Grad-CAM
-        ax4 = axes[i, 3]
-        if heatmap is not None:
-            ax4.imshow(heatmap[i], cmap='jet')
+        ax1 = fig.add_subplot(gs[0, 0])
+        ax1.imshow(image_np)
+        ax1.set_title('Original Image', fontsize=14, fontweight='bold')
+        ax1.axis('off')
+        
+        ax2 = fig.add_subplot(gs[0, 1])
+        ax2.imshow(gt_mask_np.squeeze(), cmap='gray')
+        ax2.set_title('Ground Truth', fontsize=14, fontweight='bold')
+        ax2.axis('off')
+        
+        ax3 = fig.add_subplot(gs[0, 2])
+        ax3.imshow(pred_mask_np.squeeze(), cmap='gray')
+        ax3.set_title(f'UNet-{backbone.capitalize()}\nPrediction', fontsize=14, fontweight='bold')
+        ax3.axis('off')
+        
+        ax4 = fig.add_subplot(gs[0, 3])
+        ax4.imshow(heatmap, cmap='jet')
+        ax4.set_title('Grad-CAM\nAttention Heatmap', fontsize=14, fontweight='bold')
+        ax4.axis('off')
+        
+        ax5 = fig.add_subplot(gs[0, 4])
+        ax5.imshow(image_np)
+        ax5.imshow(heatmap, cmap='jet', alpha=0.5)
+        ax5.set_title('Grad-CAM Overlay\n(Red=High Attention)', fontsize=14, fontweight='bold')
+        ax5.axis('off')
+        
+        ax6 = fig.add_subplot(gs[1, 0])
+        ax6.imshow(image_np)
+        ax6.imshow(pred_mask_np.squeeze(), cmap='hot', alpha=0.4)
+        ax6.set_title('Prediction Overlay', fontsize=14, fontweight='bold')
+        ax6.axis('off')
+        for j, (rx, ry, rw, rh) in enumerate(interesting_regions[:3]):
+            rect = Rectangle((rx, ry), rw, rh, linewidth=2, edgecolor='yellow', facecolor='none', linestyle='--')
+            ax6.add_patch(rect)
+            ax6.text(rx, ry-5, f'Detail {j+1}', color='yellow', fontsize=10, fontweight='bold')
+        
+        ax7 = fig.add_subplot(gs[1, 1])
+        ax7.imshow(gt_mask_np.squeeze(), cmap='gray')
+        for j, (bx, by) in enumerate(bifurcations[:5]):
+            circle = plt.Circle((bx, by), 15, fill=False, color='cyan', linewidth=2)
+            ax7.add_patch(circle)
+            ax7.text(bx+20, by, f'B{j+1}', color='cyan', fontsize=9, fontweight='bold')
+        ax7.set_title('Vessel Bifurcations\n(Cyan Circles)', fontsize=14, fontweight='bold')
+        ax7.axis('off')
+        
+        ax8 = fig.add_subplot(gs[1, 2])
+        ax8.imshow(gt_mask_np.squeeze(), cmap='gray')
+        for j, (rx, ry, rw, rh) in enumerate(thin_regions[:3]):
+            rect = Rectangle((rx, ry), rw, rh, linewidth=2, edgecolor='lime', facecolor='none')
+            ax8.add_patch(rect)
+            ax8.text(rx, ry-5, f'Thin {j+1}', color='lime', fontsize=10, fontweight='bold')
+        ax8.set_title('Thin Vessel Regions\n(Green Boxes)', fontsize=14, fontweight='bold')
+        ax8.axis('off')
+        
+        if len(interesting_regions) > 0:
+            ax9 = fig.add_subplot(gs[1, 3])
+            rx, ry, rw, rh = interesting_regions[0]
+            margin = 10
+            x1, y1 = max(0, rx-margin), max(0, ry-margin)
+            x2, y2 = min(512, rx+rw+margin), min(512, ry+rh+margin)
+            ax9.imshow(image_np[y1:y2, x1:x2])
+            ax9.set_title(f'Zoomed Detail 1\n(Original)', fontsize=12, fontweight='bold')
+            ax9.axis('off')
+            
+            ax10 = fig.add_subplot(gs[1, 4])
+            detail_pred = pred_mask_np.squeeze()[y1:y2, x1:x2]
+            ax10.imshow(detail_pred, cmap='gray')
+            ax10.set_title(f'Zoomed Prediction\nDetail Region', fontsize=12, fontweight='bold')
+            ax10.axis('off')
         else:
-            ax4.imshow(np.zeros_like(x[i][:, :, 0]), cmap='jet')
-        ax4.set_title(f"GradCAM {i+1}")
-        ax4.axis("off")
+            for col in [3, 4]:
+                ax = fig.add_subplot(gs[1, col])
+                ax.text(0.5, 0.5, 'No significant\ndifference regions', ha='center', va='center', fontsize=14)
+                ax.axis('off')
         
-        # 预测叠加在原始图像上
-        ax5 = axes[i, 4]
-        ax5.imshow(x[i])
-        ax5.imshow((y_pred[i] > 0.5).astype("int32"), cmap='hot', alpha=0.4)
-        ax5.set_title(f"Overlay {i+1}")
-        ax5.axis("off")
-    
-    plt.tight_layout()
-    save_path = os.path.join(save_dir, f'{dataset_name}_visualization_{backbone}.png')
-    plt.savefig(save_path, dpi=200, bbox_inches='tight')
-    plt.close()
-    print(f"Visualization saved to: {save_path}")
+        save_path = os.path.join(save_dir, f'{dataset_name}_visualization_{backbone}_sample{i+1}.png')
+        plt.savefig(save_path, dpi=200, bbox_inches='tight', facecolor='white')
+        plt.close()
+        print(f"Visualization saved to: {save_path}")
 
 
 def test_on_dataset(dataset_name, dataset, save_dir, backbone):

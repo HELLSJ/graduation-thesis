@@ -216,6 +216,93 @@ graduation thesis/
 | test_generalization | 测试模型泛化能力 | 无 | 无 | src/test_generalization_unet.py:427 |
 | save_generalization_results | 保存泛化测试结果 | chase_loss: float - CHASE_DB1损失值<br>chase_dice: float - CHASE_DB1 Dice值<br>chase_recall: float - CHASE_DB1召回率<br>chase_precision: float - CHASE_DB1精确率<br>hrf_loss: float - HRF损失值<br>hrf_dice: float - HRF Dice值<br>hrf_recall: float - HRF召回率<br>hrf_precision: float - HRF精确率<br>save_dir: str - 保存目录<br>backbone: str - 使用的backbone | 无 | src/test_generalization_unet.py:469 |
 
+### 9.6 命令行参数
+
+#### 9.6.1 训练脚本 (unet_train.py, unetpp_train.py)
+
+| 参数 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| --backbone | str | 'efficientnet' | 使用的骨干网络 ('efficientnet' 或 'resnet') |
+
+**使用示例：**
+```bash
+# 训练UNet with EfficientNet backbone（默认）
+cd src && python unet_train.py
+
+# 训练UNet with ResNet backbone
+cd src && python unet_train.py --backbone resnet
+
+# 训练UNet++ with EfficientNet backbone（默认）
+cd src && python unetpp_train.py
+
+# 训练UNet++ with ResNet backbone
+cd src && python unetpp_train.py --backbone resnet
+```
+
+#### 9.6.2 评估脚本 (evaluate_model_unet.py, evaluate_model_unetpp.py)
+
+| 参数 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| --backbone | str | 'efficientnet' | 使用的骨干网络 ('efficientnet' 或 'resnet') |
+| --results-dir | str | None | 结果保存目录（不指定时自动生成） |
+| --model-dir | str | None | 模型存放目录（不指定时自动生成） |
+
+**使用示例：**
+```bash
+# 评估UNet with EfficientNet backbone（默认）
+cd src && python evaluate_model_unet.py
+
+# 评估UNet with ResNet backbone
+cd src && python evaluate_model_unet.py --backbone resnet
+
+# 指定自定义结果目录
+cd src && python evaluate_model_unet.py --backbone resnet --results-dir custom_results
+
+# 指定自定义模型目录
+cd src && python evaluate_model_unet.py --backbone resnet --model-dir path/to/model
+```
+注意：评估代码需要读取你训练后保存的best_model，所以如果在没训练的情况下进行训练，会出现下面的提示
+![[eval error.png]]
+
+#### 9.6.3 泛化测试脚本 (test_generalization_unet.py, test_generalization_unetpp.py)
+
+| 参数 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| --backbone | str | 'efficientnet' | 使用的骨干网络 ('efficientnet' 或 'resnet') |
+| --results-dir | str | None | 结果保存目录（不指定时自动生成） |
+| --model-dir | str | None | 模型存放目录（不指定时自动生成） |
+
+**使用示例：**
+```bash
+# 测试UNet++ with EfficientNet backbone（默认）
+cd src && python test_generalization_unetpp.py
+
+# 测试UNet++ with ResNet backbone
+cd src && python test_generalization_unetpp.py --backbone resnet
+
+# 指定自定义结果目录
+cd src && python test_generalization_unetpp.py --backbone resnet --results-dir custom_results
+
+# 指定自定义模型目录
+cd src && python test_generalization_unetpp.py --backbone resnet --model-dir path/to/model
+```
+
+**默认路径说明：**
+
+未指定 `--results-dir` 时：
+- UNet with EfficientNet：`results/generalization_test/unet/EfficientNet`
+- UNet with ResNet：`results/generalization_test/unet/ResNet`
+- UNet++ with EfficientNet：`results/generalization_test/unetpp/EfficientNet`
+- UNet++ with ResNet：`results/generalization_test/unetpp/ResNet`
+
+未指定 `--model-dir` 时：
+- UNet with EfficientNet：`results/unet_efficientnet_train`
+- UNet with ResNet：`results/unet_resnet_train`
+- UNet++ with EfficientNet：`results/unetpp_efficientnet_train`
+- UNet++ with ResNet：`results/unetpp_resnet_train`
+
+注意：测试代码需要读取你训练后保存的best_model，所以如果在没训练的情况下进行训练，会出现下面的提示
+![[test_error.png]]
 ## 10. 文件路径
 
 | 路径 | 说明 | 用途 |

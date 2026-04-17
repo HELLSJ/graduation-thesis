@@ -219,6 +219,20 @@ cd src
 python test_generalization_unet.py --backbone resnet
 ```
 
+- 指定自定义结果目录：
+
+```bash
+cd src
+python test_generalization_unet.py --backbone resnet --results-dir custom_results
+```
+
+- 指定自定义模型目录：
+
+```bash
+cd src
+python test_generalization_unet.py --backbone resnet --model-dir path/to/model
+```
+
 #### 4.3.2 测试UNet++模型泛化能力
 
 - 测试EfficientNet backbone模型（默认）：
@@ -233,6 +247,20 @@ python test_generalization_unetpp.py
 ```bash
 cd src
 python test_generalization_unetpp.py --backbone resnet
+```
+
+- 指定自定义结果目录：
+
+```bash
+cd src
+python test_generalization_unetpp.py --backbone resnet --results-dir custom_results
+```
+
+- 指定自定义模型目录：
+
+```bash
+cd src
+python test_generalization_unetpp.py --backbone resnet --model-dir path/to/model
 ```
 
 ## 5. 结果查看

@@ -219,6 +219,20 @@ cd src
 python test_generalization_unet.py --backbone resnet
 ```
 
+- Specify custom results directory:
+
+```bash
+cd src
+python test_generalization_unet.py --backbone resnet --results-dir custom_results
+```
+
+- Specify custom model directory:
+
+```bash
+cd src
+python test_generalization_unet.py --backbone resnet --model-dir path/to/model
+```
+
 #### 4.3.2 Test UNet++ Model Generalization Ability
 
 - Test EfficientNet backbone model (default):
@@ -233,6 +247,20 @@ python test_generalization_unetpp.py
 ```bash
 cd src
 python test_generalization_unetpp.py --backbone resnet
+```
+
+- Specify custom results directory:
+
+```bash
+cd src
+python test_generalization_unetpp.py --backbone resnet --results-dir custom_results
+```
+
+- Specify custom model directory:
+
+```bash
+cd src
+python test_generalization_unetpp.py --backbone resnet --model-dir path/to/model
 ```
 
 ## 5. Results View

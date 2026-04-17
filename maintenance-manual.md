@@ -216,6 +216,95 @@ graduation thesis/
 | test_generalization | Test model generalization ability | None | None | src/test_generalization_unet.py:427 |
 | save_generalization_results | Save generalization test results | chase_loss: float - CHASE_DB1 loss value<br>chase_dice: float - CHASE_DB1 Dice value<br>chase_recall: float - CHASE_DB1 recall<br>chase_precision: float - CHASE_DB1 precision<br>hrf_loss: float - HRF loss value<br>hrf_dice: float - HRF Dice value<br>hrf_recall: float - HRF recall<br>hrf_precision: float - HRF precision<br>save_dir: str - Save directory<br>backbone: str - Used backbone | None | src/test_generalization_unet.py:469 |
 
+### 9.6 Command Line Arguments
+
+#### 9.6.1 Training Scripts (unet_train.py, unetpp_train.py)
+
+| Argument | Type | Default | Description |
+|----------|------|---------|-------------|
+| --backbone | str | 'efficientnet' | Backbone model to use ('efficientnet' or 'resnet') |
+
+**Usage Examples:**
+```bash
+# Train UNet with EfficientNet backbone (default)
+cd src && python unet_train.py
+
+# Train UNet with ResNet backbone
+cd src && python unet_train.py --backbone resnet
+
+# Train UNet++ with EfficientNet backbone (default)
+cd src && python unetpp_train.py
+
+# Train UNet++ with ResNet backbone
+cd src && python unetpp_train.py --backbone resnet
+```
+
+#### 9.6.2 Evaluation Scripts (evaluate_model_unet.py, evaluate_model_unetpp.py)
+
+| Argument | Type | Default | Description |
+|----------|------|---------|-------------|
+| --backbone | str | 'efficientnet' | Backbone model to use ('efficientnet' or 'resnet') |
+| --results-dir | str | None | Directory to save results (auto-generated if not specified) |
+| --model-dir | str | None | Directory where the trained model is saved (auto-generated if not specified) |
+
+**Usage Examples:**
+```bash
+# Evaluate UNet with EfficientNet backbone (default)
+cd src && python evaluate_model_unet.py
+
+# Evaluate UNet with ResNet backbone
+cd src && python evaluate_model_unet.py --backbone resnet
+
+# Specify custom results directory
+cd src && python evaluate_model_unet.py --backbone resnet --results-dir custom_results
+
+# Specify custom model directory
+cd src && python evaluate_model_unet.py --backbone resnet --model-dir path/to/model
+```
+
+Note: The evaluation script needs to read the best_model saved after training. If you run the evaluation script without training first, you will see the following error:
+![[eval error.png]]
+
+#### 9.6.3 Generalization Test Scripts (test_generalization_unet.py, test_generalization_unetpp.py)
+
+| Argument | Type | Default | Description |
+|----------|------|---------|-------------|
+| --backbone | str | 'efficientnet' | Backbone model to use ('efficientnet' or 'resnet') |
+| --results-dir | str | None | Directory to save results (auto-generated if not specified) |
+| --model-dir | str | None | Directory where the trained model is saved (auto-generated if not specified) |
+
+**Usage Examples:**
+```bash
+# Test UNet++ with EfficientNet backbone (default)
+cd src && python test_generalization_unetpp.py
+
+# Test UNet++ with ResNet backbone
+cd src && python test_generalization_unetpp.py --backbone resnet
+
+# Specify custom results directory
+cd src && python test_generalization_unetpp.py --backbone resnet --results-dir custom_results
+
+# Specify custom model directory
+cd src && python test_generalization_unetpp.py --backbone resnet --model-dir path/to/model
+```
+
+**Default Paths:**
+
+When `--results-dir` is not specified:
+- UNet with EfficientNet: `results/generalization_test/unet/EfficientNet`
+- UNet with ResNet: `results/generalization_test/unet/ResNet`
+- UNet++ with EfficientNet: `results/generalization_test/unetpp/EfficientNet`
+- UNet++ with ResNet: `results/generalization_test/unetpp/ResNet`
+
+When `--model-dir` is not specified:
+- UNet with EfficientNet: `results/unet_efficientnet_train`
+- UNet with ResNet: `results/unet_resnet_train`
+- UNet++ with EfficientNet: `results/unetpp_efficientnet_train`
+- UNet++ with ResNet: `results/unetpp_resnet_train`
+
+Note: The generalization test script needs to read the best_model saved after training. If you run the test script without training first, you will see the following error:
+![[test_error.png]]
+
 ## 10. File Paths
 
 | Path | Description | Purpose |
