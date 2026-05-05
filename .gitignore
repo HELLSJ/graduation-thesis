@@ -1,6 +1,5 @@
 # 不需要提交的文件和目录
 results/
-毕业设计：视网膜图像分割/
 .venv/
 .idea/
 __pycache__/
@@ -8,6 +7,13 @@ __pycache__/
 picture/
 .obsidian/
 medicai-retinal-vessel-segmentation-with-gradcam.ipynb
+
+# 毕业设计目录中的特定文件和目录
+毕业设计：视网膜图像分割/
+Li_Chengxuan/
+code_list.pdf
+Final Report.pdf
+Li_Chengxuan.zip
 
 # 其他不需要提交的文件
 *.pyc
